@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ghostwire - Ephemeral, zero-backend, true peer-to-peer chat application. Complete privacy.">
+    <meta name="keywords" content="Ghostwire, P2P Chat, Peer-to-Peer, Private Chat, Ephemeral Chat, WebRTC">
+    
+    <title>Ghostwire 👻 | Private P2P Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</head>
+<body>
+    <div id="landing-screen" class="screen active">
+        <div class="bento-grid">
+            
+            <!-- Bento Box: Hero -->
+            <header class="bento-box hero-box">
+                <div class="logo-container">
+                    <span class="ghost-icon">👻</span>
+                </div>
+                <h1>GHOSTWIRE</h1>
+                <p class="tagline">ZERO-BACKEND P2P CHAT</p>
+                <div class="neo-badge">EPHEMERAL</div>
+            </header>
+
+            <!-- Bento Box: Create Action -->
+            <div class="bento-box create-box">
+                <h2>Start Session</h2>
+                <p>Generate a unique link to invite a peer.</p>
+                <button id="btn-create" class="neo-btn primary full-width">➕ Create</button>
+            </div>
+
+            <!-- Bento Box: Join Action -->
+            <div class="bento-box join-box">
+                <h2>Join Session</h2>
+                <p>Have a code? Instantly connect.</p>
+                <button id="btn-join" class="neo-btn secondary full-width">➡️ Join</button>
+            </div>
+
+            <!-- Bento Box: Info / SEO -->
+            <section class="bento-box info-box">
+                <h2>WHAT IS IT?</h2>
+                <p>Ghostwire is an innovative serverless chat application utilizing WebRTC and PeerJS signaling.</p>
+                <p>No registration is required, and zero chat history is stored anywhere. The moment you close your browser tab, your conversation vanishes forever.</p>
+            </section>
+
+             <!-- Bento Box: Privacy -->
+             <div class="bento-box privacy-box">
+                 <h2>PRIVACY</h2>
+                 <p>Connections are strictly Peer-to-Peer. No database, no logging.</p>
+                 <a href="https://github.com/rn-swain/ghostwire" class="github-link neo-badge small" target="_blank">View Code</a>
+             </div>
+        </div>
+    </div>
+
+    <!-- Create Room Interface -->
+    <div id="create-screen" class="screen">
+        <header class="app-header neo-box">
+            <button id="btn-back-create" class="neo-btn square">⬅</button>
+            <h2>CREATING ROOM</h2>
+        </header>
+
+        <div class="screen-content bento-grid create-bento">
+            
+            <!-- Loading Status box -->
+            <div id="create-status-box" class="bento-box status-loading">
+                <p id="create-status-text" class="blink">ESTABLISHING NETWORK...</p>
+            </div>
+            
+            <div id="create-ready-controls" class="bento-box hidden connection-controls">
+                <h3>ROOM CODE:</h3>
+                <div class="neo-input-box">
+                    <span id="room-code">---</span>
+                    <button id="btn-copy-code" class="neo-btn small outline">COPY</button>
+                </div>
+                
+                <h3 style="margin-top: 1.5rem;">SHARE LINK:</h3>
+                <div class="neo-input-box link-box">
+                    <input type="text" id="room-link" readonly>
+                    <button id="btn-copy-link" class="neo-btn small primary">COPY</button>
+                </div>
+            </div>
+
+            <div id="create-qr-box" class="bento-box qr-bento hidden">
+                <h3>SCAN TO JOIN</h3>
+                <div id="qr-code"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Join Room Interface -->
+    <div id="join-screen" class="screen">
+        <header class="app-header neo-box">
+            <button id="btn-back-join" class="neo-btn square">⬅</button>
+            <h2>JOIN ROOM</h2>
+        </header>
+
+        <div class="screen-content bento-grid join-bento">
+            
+            <div class="bento-box input-bento">
+                <div class="input-group">
+                    <label>ROOM CODE</label>
+                    <input type="text" id="join-code" class="neo-input uppercase" placeholder="ABC-DEF" maxlength="15" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>NICKNAME (OPTIONAL)</label>
+                    <input type="text" id="nickname" class="neo-input" placeholder="Anonymous" maxlength="20" autocomplete="off">
+                </div>
+                <button id="btn-join-room" class="neo-btn primary full-width mt-1">CONNECT</button>
+            </div>
+            
+            <div class="bento-box scan-bento">
+                 <h3>OR SCAN CODE</h3>
+                 <button id="btn-scan-qr" class="neo-btn secondary full-width mt-1">📷 OPEN CAMERA</button>
+                 <div id="qr-reader" class="hidden outline-box mt-1"></div>
+                 <button id="btn-stop-scan" class="neo-btn danger full-width hidden mt-1">STOP</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Active Chat Interface -->
+    <div id="chat-screen" class="screen">
+        <header class="chat-header neo-box">
+            <div class="room-stats">
+                <span class="ghost-small">👻</span>
+                <span id="chat-room-name">Ghostwire</span>
+                <span id="peer-count" class="neo-badge small">0 PEERS</span>
+            </div>
+            <button id="btn-leave" class="neo-btn danger square" title="Destroy Room">✕</button>
+        </header>
+
+        <main id="chat-messages" class="chat-container">
+            <div class="system-message neo-box">
+                CONNECTED - CHAT IS LIVE & P2P.
+            </div>
+        </main>
+
+        <div id="typing-indicator" class="typing-box hidden neo-box">
+            <span id="typing-text">SOMEONE IS TYPING...</span>
+        </div>
+
+        <footer class="chat-input-area neo-box">
+            <input type="text" id="message-input" class="neo-input full-width" placeholder="Write a message..." autocomplete="off">
+            <button id="btn-send" class="neo-btn primary square" style="font-size: 1.2rem;">➤</button>
+        </footer>
+    </div>
+
+    <!-- Global Connection Modal -->
+    <div id="connection-error-modal" class="modal hidden">
+        <div class="bento-box error-box">
+            <h2>CONNECTION FAILED</h2>
+            <p id="error-message">Unable to connect to the peer. The code might be invalid or the peer disconnected.</p>
+            <button id="btn-close-error" class="neo-btn outline full-width mt-1">CLOSE</button>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/webrtc.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
