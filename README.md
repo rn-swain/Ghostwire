@@ -56,14 +56,14 @@ Ghostwire establishes a direct WebRTC DataChannel connection between users. We u
 3. **Select branch:** `main`
 4. **Your chat is live!** 🎉
 
-Access it at: `https://rn-swain.github.io/ghostwire`
+Access it at: ` https://rn-swain.github.io/Ghostwire/`
 
 ### Run Locally
 
 ```bash
 # Clone the repository
-git clone https://github.com/rn-swain/ghostwire.git
-cd ghostwire
+git clone https://github.com/rn-swain/Ghostwire.git
+cd Ghostwire
 
 # Serve locally
 python -m http.server 8000
